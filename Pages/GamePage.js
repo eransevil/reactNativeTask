@@ -3,19 +3,20 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
-  View, Button, TouchableOpacity, Platform
+  View, Button, TouchableOpacity, Modal, Pressable, TextInput
 } from 'react-native';
+import { useSelector } from 'react-redux'
 import ColorCard from '../components/ColorCard';
 
 import Sound from 'react-native-sound'
 
 import { timeout } from '../utils/utils';
 
+import { saveToStorage, getFromStorage } from '../utils/setAsyncStoarge';
 
 const GamePage = ({ navigation }) => {
-
-  const [music, setMusic] = useState(false)
-
+  const bestResults = useSelector((state) => state.reducer.results)
+  
   const initPlay = {
     isDisplay: false,
     colors: [],
@@ -24,11 +25,21 @@ const GamePage = ({ navigation }) => {
     userColors: []
   }
 
-  const colorsList = ['green', 'red', 'yellow', 'blue']
+  console.log('bestResultsbestResultsbestResults', bestResults);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [music, setMusic] = useState(false)
+  const [userName, setUserName] = useState('')
 
   const [isOn, setIsOn] = useState(null)
   const [play, setPlay] = useState(initPlay)
   const [flashColor, setFlashColor] = useState('')
+  const [userSocre, setUserScore] = useState(0)
+
+
+  const colorsList = ['green', 'red', 'yellow', 'blue']
+
+
+
 
   useEffect(() => {
     if (isOn) {
@@ -67,17 +78,10 @@ const GamePage = ({ navigation }) => {
     setMusic(summer)
   }
 
-
-
-
   const startGame = () => {
     initMusic()
     setIsOn(true)
   }
-
-
-
-
   const displayColor = async () => {
     await timeout(700)
     for (let i = 0; i < play.colors.length; i++) {
@@ -103,10 +107,10 @@ const GamePage = ({ navigation }) => {
     if (!play.isDisplay && play.userPlay) {
       music.play()
       const copyUserColors = [...play.userColors]
-      const lastColor = copyUserColors.pop()
+      const currColor = copyUserColors.pop()
       setFlashColor(color)
 
-      if (color === lastColor) {
+      if (color === currColor) {
         if (copyUserColors.length) setPlay({ ...play, userColors: copyUserColors })
         else {
           await timeout(700)
@@ -114,6 +118,7 @@ const GamePage = ({ navigation }) => {
         }
       } else {
         await timeout(700)
+        setUserScore(play.score)
         setPlay({ ...initPlay, score: play.colors.length })
       }
       await timeout(400)
@@ -122,9 +127,21 @@ const GamePage = ({ navigation }) => {
     }
   }
 
-  const closeHandle = () => {
+  const closeHandle = async () => {
+    setModalVisible(true)
     setIsOn(false)
   }
+
+  const onChangeText = (value) => setUserName(value) 
+
+  const closeModal = async () => {
+    setModalVisible(!modalVisible)
+    console.log('play.score', userSocre);
+    await saveToStorage('bestResults', { result: userSocre, name: userName })
+    setUserScore(0)
+
+  }
+
 
   return (
     <View style={styles.screen}>
@@ -140,6 +157,27 @@ const GamePage = ({ navigation }) => {
           <TouchableOpacity style={styles.startBtnContainer} onPress={closeHandle}><Text style={styles.btn}>Close</Text>
           </TouchableOpacity></View> : null}
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>your name?</Text>
+            <TextInput style={styles.input}
+              onChangeText={onChangeText}
+              value={userName} ></TextInput >
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={closeModal}
+            >
+              <Text style={styles.textStyle}>Save</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
 
     </View>
   )
@@ -187,6 +225,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 50,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "black",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    color: 'black'
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    color: 'black'
+  }
 });
 
 export default GamePage;
