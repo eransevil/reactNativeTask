@@ -6,13 +6,17 @@ import {
   StyleSheet,
   Text
 } from 'react-native';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 import AppNavigation from './navigation/AppNavigation';
 
 const App = () => {
 
   return (
-      <AppNavigation/>
+    <Provider store={store}>
+      <AppNavigation />
+    </Provider>
   );
 };
 

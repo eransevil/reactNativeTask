@@ -2,8 +2,8 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import {Text} from 'react-native';
-import Page1 from '../Pages/Page1';
-import Page2 from '../Pages/Page2';
+import GamePage from '../Pages/GamePage';
+import ResultPage from '../Pages/ResultPage';
 const AppNavigation = () => {
   const AppNavigator = createNativeStackNavigator();
 
@@ -11,12 +11,12 @@ const AppNavigation = () => {
     <NavigationContainer>
     <AppNavigator.Navigator screenOptions={{ headerShown: false }}>
       <AppNavigator.Screen
-        name={'page1'}
-        component={Page1}
+        name={'GamePage'}
+        component={GamePage}
       />
       <AppNavigator.Screen
-        name={'page2'}
-        component={Page2}
+        name={'ResultPage'}
+        component={ResultPage}
       />
     </AppNavigator.Navigator>
     </NavigationContainer>

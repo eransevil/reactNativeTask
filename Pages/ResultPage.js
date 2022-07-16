@@ -6,11 +6,11 @@ import {
   View, Button
 } from 'react-native';
 
-const Page2 = ({navigation}) => {
+const ResultPage = ({navigation}) => {
   return (
     <View style={styles.screen}>
         <Text>Page 2 !!</Text>
-        <Button title='Navigate to Page 1' onPress={() => navigation.navigate('page1')} />
+        <Button title='Navigate to Page 1' onPress={() => navigation.navigate('GamePage')} />
     </View>
   )
 };
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Page2;
+export default ResultPage;
