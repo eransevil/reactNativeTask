@@ -9,25 +9,21 @@ import { useSelector } from 'react-redux'
 
 const ResultPage = ({ navigation }) => {
   const bestResults = useSelector((state) => state.reducer.results)
-  console.log('bestResults', bestResults);
+
   return (
     <View style={styles.screen}>
-      <Button title='Return to to Simon game' onPress={() => navigation.navigate('GamePage')} />
-
+      <Text style={styles.title}>RESULT PAGE</Text>
       <View style={styles.headerContainer}>
         <Text style={styles.cell} customStyle={{ width: '40%' }}>Name</Text>
         <Text style={styles.cell} customStyle={{ width: '40%' }}>Result</Text>
 
+      </View>
+      {bestResults?.map(({ name, result }, idx) => (
+        <View key={idx} style={styles.tableBodyContainer}>
+          <Text style={styles.cell}> {name}</Text>
+          <Text style={styles.cell}> {result}</Text>
         </View>
-        {bestResults?.map(({ name, result }) => (
-          <View style={styles.tableBodyContainer}>
-            <Text style={styles.cell}> {name}</Text>
-            <Text style={styles.cell}> {result}</Text>
-          </View>
-        ))}
-
-
-
+      ))}
     </View>
   )
 };
@@ -36,8 +32,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerContainer: {
     height: 50,
@@ -46,23 +41,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     backgroundColor: 'gray',
-    borderWidth:1
+    borderWidth: 1,
+    borderRadius: 4
 
   },
-  tableBodyContainer:{
+  tableBodyContainer: {
     width: '70%',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
     backgroundColor: 'gray',
-    borderWidth:1
+    borderWidth: 1,
+    borderRadius: 2
 
   },
-  cell:{
+  cell: {
     color: 'white',
     width: 80,
-    textAlign:'center',
+    textAlign: 'center',
     padding: 5,
+  },
+  title: {
+    color: 'black',
+    margin: 30,
+    fontSize: 20,
+    fontWeight: 'bold',
+    justifyContent: 'center',
   }
 });
 

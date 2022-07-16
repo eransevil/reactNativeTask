@@ -6,6 +6,8 @@ import ResultPage from '../Pages/ResultPage';
 import { getFromStorage } from '../utils/setAsyncStoarge';
 import { useDispatch } from 'react-redux'
 import { initResultes } from '../store/resultSlice';
+import AppHeader from '../components/AppHeader';
+
 const AppNavigation = () => {
   const AppNavigator = createNativeStackNavigator();
   const dispatch = useDispatch()
@@ -20,7 +22,10 @@ const AppNavigation = () => {
 
   return (
     <NavigationContainer>
-      <AppNavigator.Navigator screenOptions={{ headerShown: false }}>
+      <AppNavigator.Navigator screenOptions={{
+        headerShown: true,
+        header: () => <AppHeader />,
+      }}>
         <AppNavigator.Screen
           name={'GamePage'}
           component={GamePage}

@@ -1,19 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View, Button, TouchableOpacity, Modal, Pressable, TextInput
+  StyleSheet, Text, View, TouchableOpacity, Modal, Pressable, TextInput
 } from 'react-native';
 import { useDispatch } from 'react-redux'
+import Sound from 'react-native-sound'
+import { saveResultToStorage } from '../store/resultAction';
+
+//componentes 
 import ColorCard from '../components/ColorCard';
 
-import Sound from 'react-native-sound'
-
+//utils
 import { timeout } from '../utils/utils';
-
-import { saveToStorage, getFromStorage } from '../utils/setAsyncStoarge';
-import { saveResultToStorage } from '../store/resultAction';
 
 const GamePage = ({ navigation }) => {
   const dispatch = useDispatch()
@@ -62,8 +60,7 @@ const GamePage = ({ navigation }) => {
   const initMusic = async () => {
     let summer = new Sound('summer.mp3', Sound.MAIN_BUNDLE, (err) => {
       if (err) {
-        console.log('err`', err);
-        return
+        return console.log('err`', err);
       }
       summer.play((success) => {
         console.log('end', success);
@@ -76,6 +73,7 @@ const GamePage = ({ navigation }) => {
     initMusic()
     setIsOn(true)
   }
+
   const displayColor = async () => {
     await timeout(700)
     for (let i = 0; i < play.colors.length; i++) {
@@ -103,17 +101,17 @@ const GamePage = ({ navigation }) => {
       const copyUserColors = [...play.userColors]
       const currColor = copyUserColors.pop()
       setFlashColor(color)
-
       if (color === currColor) {
-        if (copyUserColors.length) setPlay({ ...play, userColors: copyUserColors })
-        else {
+        if (copyUserColors.length) setPlay({ ...play, userColors: copyUserColors })  //correct but there are still more colors to press
+        else { //finish all colors 
           await timeout(700)
           setPlay({ ...play, isDisplay: true, userPlay: false, score: play.colors.length, userColors: [] })
         }
-      } else {
+      } else { // wrong answer
         await timeout(700)
         setUserScore(play.score)
         setPlay({ ...initPlay, score: play.colors.length })
+        closeHandle()
       }
       await timeout(400)
       music.stop()
@@ -133,6 +131,7 @@ const GamePage = ({ navigation }) => {
     const userInfo = { result: userSocre, name: userName }
     dispatch(saveResultToStorage(userInfo))
     setUserScore(0)
+    setUserName('')
     navigation.navigate('resultPage')
   }
 
@@ -145,11 +144,6 @@ const GamePage = ({ navigation }) => {
       <View style={styles.startButton}>
         {!isOn && !play.score && <TouchableOpacity style={styles.startBtnContainer} onPress={startGame}><Text style={styles.btn}>Start</Text></TouchableOpacity>}
         {isOn && (play.isDisplay || play.userPlay) && <View style={styles.scoreContainer}><Text style={styles.btn}>{play.score}</Text></View>}
-        {(isOn && !play.isDisplay && !play.userPlay && play.score) ? <View style={styles.loss}>
-          <Text style={styles.gameOver}>Game Over</Text>
-          <Text style={styles.gameOver}>Final Score: {play.score}</Text>
-          <TouchableOpacity style={styles.startBtnContainer} onPress={closeHandle}><Text style={styles.btn}>Close</Text>
-          </TouchableOpacity></View> : null}
       </View>
 
       <Modal
@@ -159,23 +153,21 @@ const GamePage = ({ navigation }) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>your name?</Text>
+            <Text style={styles.gameOver}>Game Over</Text>
+            <Text style={styles.modalText}>Final Score: {userSocre}</Text>
+            <Text style={styles.modalText}>Enter name:</Text>
             <TextInput style={styles.input}
               onChangeText={onChangeText}
-              value={userName} ></TextInput >
+              value={userName}></TextInput>
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={closeModal}
             >
-              <Text style={styles.textStyle}>Save</Text>
+              <Text style={styles.saveBtn}>Save</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
-      <Button title='Navigate to resultPage' onPress={() => navigation.navigate('resultPage')
-      } />
-
-
     </View>
   )
 };
@@ -259,7 +251,7 @@ const styles = StyleSheet.create({
   buttonClose: {
     backgroundColor: "#2196F3",
   },
-  textStyle: {
+  saveBtn: {
     color: "black",
     fontWeight: "bold",
     textAlign: "center"

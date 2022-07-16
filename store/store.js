@@ -3,7 +3,7 @@ import { resultSlice } from './resultSlice';
 
 
 const store = configureStore({
-     reducer:resultSlice
+    reducer: resultSlice
 });
 
 export default store;

@@ -5,7 +5,6 @@ const initialState = {
     results: []
 };
 
-console.log('initialState',initialState );
 
 export const resultSlice = createSlice({
     name: 'resultSlice',
@@ -13,10 +12,9 @@ export const resultSlice = createSlice({
     reducers: {
 
         initResultes: (state, action) => {
-            console.log('action', action.payload);
             state.results = action.payload;
         },
-        setResult:(state, action) =>{
+        setResult: (state, action) => {
             state.results = action.payload;
         }
     },
