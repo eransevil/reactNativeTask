@@ -5,7 +5,7 @@ import {
   Text,
   View, Button, TouchableOpacity, Modal, Pressable, TextInput
 } from 'react-native';
-import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import ColorCard from '../components/ColorCard';
 
 import Sound from 'react-native-sound'
@@ -13,10 +13,11 @@ import Sound from 'react-native-sound'
 import { timeout } from '../utils/utils';
 
 import { saveToStorage, getFromStorage } from '../utils/setAsyncStoarge';
+import { saveResultToStorage } from '../store/resultAction';
 
 const GamePage = ({ navigation }) => {
-  const bestResults = useSelector((state) => state.reducer.results)
-  
+  const dispatch = useDispatch()
+
   const initPlay = {
     isDisplay: false,
     colors: [],
@@ -24,8 +25,6 @@ const GamePage = ({ navigation }) => {
     userPlay: false,
     userColors: []
   }
-
-  console.log('bestResultsbestResultsbestResults', bestResults);
   const [modalVisible, setModalVisible] = useState(false);
   const [music, setMusic] = useState(false)
   const [userName, setUserName] = useState('')
@@ -34,12 +33,7 @@ const GamePage = ({ navigation }) => {
   const [play, setPlay] = useState(initPlay)
   const [flashColor, setFlashColor] = useState('')
   const [userSocre, setUserScore] = useState(0)
-
-
   const colorsList = ['green', 'red', 'yellow', 'blue']
-
-
-
 
   useEffect(() => {
     if (isOn) {
@@ -132,14 +126,14 @@ const GamePage = ({ navigation }) => {
     setIsOn(false)
   }
 
-  const onChangeText = (value) => setUserName(value) 
+  const onChangeText = (value) => setUserName(value)
 
   const closeModal = async () => {
     setModalVisible(!modalVisible)
-    console.log('play.score', userSocre);
-    await saveToStorage('bestResults', { result: userSocre, name: userName })
+    const userInfo = { result: userSocre, name: userName }
+    dispatch(saveResultToStorage(userInfo))
     setUserScore(0)
-
+    navigation.navigate('resultPage')
   }
 
 
@@ -152,8 +146,8 @@ const GamePage = ({ navigation }) => {
         {!isOn && !play.score && <TouchableOpacity style={styles.startBtnContainer} onPress={startGame}><Text style={styles.btn}>Start</Text></TouchableOpacity>}
         {isOn && (play.isDisplay || play.userPlay) && <View style={styles.scoreContainer}><Text style={styles.btn}>{play.score}</Text></View>}
         {(isOn && !play.isDisplay && !play.userPlay && play.score) ? <View style={styles.loss}>
-          <Text style={styles.btn}>Game Over</Text>
-          <Text style={styles.btn}>Final Score: {play.score}</Text>
+          <Text style={styles.gameOver}>Game Over</Text>
+          <Text style={styles.gameOver}>Final Score: {play.score}</Text>
           <TouchableOpacity style={styles.startBtnContainer} onPress={closeHandle}><Text style={styles.btn}>Close</Text>
           </TouchableOpacity></View> : null}
       </View>
@@ -178,6 +172,9 @@ const GamePage = ({ navigation }) => {
           </View>
         </View>
       </Modal>
+      <Button title='Navigate to resultPage' onPress={() => navigation.navigate('resultPage')
+      } />
+
 
     </View>
   )
@@ -215,6 +212,11 @@ const styles = StyleSheet.create({
   btn: {
     color: 'white',
     fontSize: 20
+  },
+  gameOver: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold'
   },
   scoreContainer: {
     height: 100,
@@ -269,6 +271,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
+    width: 100,
     margin: 12,
     borderWidth: 1,
     padding: 10,

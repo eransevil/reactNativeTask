@@ -16,11 +16,15 @@ export const resultSlice = createSlice({
             console.log('action', action.payload);
             state.results = action.payload;
         },
+        setResult:(state, action) =>{
+            state.results = action.payload;
+        }
     },
 });
 
 export const {
-    initResultes
+    initResultes,
+    setResult
 } = resultSlice.actions;
 
 export default resultSlice.reducer;

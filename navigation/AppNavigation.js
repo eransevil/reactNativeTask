@@ -26,7 +26,7 @@ const AppNavigation = () => {
           component={GamePage}
         />
         <AppNavigator.Screen
-          name={'ResultPage'}
+          name={'resultPage'}
           component={ResultPage}
         />
       </AppNavigator.Navigator>
