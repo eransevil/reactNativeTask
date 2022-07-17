@@ -6,18 +6,20 @@ import ResultPage from '../Pages/ResultPage';
 import { getFromStorage } from '../utils/setAsyncStoarge';
 import { useDispatch } from 'react-redux'
 import { initResultes } from '../store/resultSlice';
-import AppHeader from '../components/AppHeader';
+import AppHeader from '../Components/AppHeader';
 
 const AppNavigation = () => {
   const AppNavigator = createNativeStackNavigator();
   const dispatch = useDispatch()
+
+
   useEffect(() => {
     fetchBestResults()
   }, [])
 
   const fetchBestResults = async () => {
     const bestResults = await getFromStorage('bestResults')
-    dispatch(initResultes(bestResults))
+    dispatch(initResultes(bestResults || []))
   }
 
   return (

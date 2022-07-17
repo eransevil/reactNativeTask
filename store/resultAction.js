@@ -1,13 +1,16 @@
-import { saveToStorage, getFromStorage } from '../utils/setAsyncStoarge';
-import { initResultes, setResult } from './resultSlice';
+import { saveToStorage } from '../utils/setAsyncStoarge';
+import { setResult } from './resultSlice';
 
 const key = 'bestResults'
 
-
-export const saveResultToStorage = (payload) => async (dispatch) => {
-    const bestResults = await getFromStorage(key);
-    bestResults.push(payload);
-    const bestResultsSorted = bestResults.sort((a, b) => b.result - a.result)
-    await saveToStorage('bestResults', bestResultsSorted.slice(0, 9))
-    dispatch(setResult(bestResultsSorted));
+export const saveResultToStorage = (payload) => async (dispatch, getState) => {
+    
+    let  bestResults  = getState().reducer.results;
+    let newBestResults = [...bestResults]
+    newBestResults?.push(payload);
+    let newBestResultsSorted = newBestResults.sort((a, b) => b.result - a.result)
+    newBestResultsSorted =  newBestResultsSorted.splice(0, 9)
+    await saveToStorage(key, newBestResultsSorted);
+ 
+    dispatch(setResult(newBestResultsSorted));
 };

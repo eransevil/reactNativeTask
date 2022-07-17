@@ -8,7 +8,7 @@ import Sound from 'react-native-sound'
 import { saveResultToStorage } from '../store/resultAction';
 
 //componentes 
-import ColorCard from '../components/ColorCard';
+import ColorCard from '../Components/ColorCard';
 
 //utils
 import { timeout } from '../utils/utils';
